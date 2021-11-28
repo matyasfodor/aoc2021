@@ -3,7 +3,8 @@ Persisted version: ./Using*WebAssembly*(created_in_Rust)\_for_Fast_React_Compone
 
 TODO:
 
-- [ ] Page structure + css
+- [x] Page structure + css
 - [ ] Update Rust recipe
+- [ ] Add colors, font, and some content
 - [ ] Dark mode?
 - [ ] Figure out hosting

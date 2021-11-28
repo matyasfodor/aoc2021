@@ -9,15 +9,25 @@ import {
   Routes,
   useRoutes,
 } from "react-router-dom";
-import Day01 from "./solutions/day01.tsx";
-import Day02 from "./solutions/day02.tsx";
-import Day03 from "./solutions/day03.tsx";
-import Day04 from "./solutions/day04.tsx";
-import Day05 from "./solutions/day05.tsx";
+import Day01 from "./solutions/day01";
+import Day02 from "./solutions/day02";
+import Day03 from "./solutions/day03";
+import Day04 from "./solutions/day04";
+import Day05 from "./solutions/day05";
+import WasmContext from "./WasmContext";
+
+const Header = styled.header`
+  height: 50px;
+`;
 
 const MainContainer = styled.div`
   display: flex;
   flex-direction: row;
+  min-height: calc(100vh - 100px);
+`;
+
+const Footer = styled.footer`
+  height: 50px;
 `;
 
 const Main = styled.main`
@@ -82,17 +92,9 @@ wasm.then((m) => {
   };
 
   const App = () => {
-    // const [name, setName] = useState("");
-    // const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    //   setName(e.target.value);
-    // };
-    const handleClick = () => {
-      alert("Length is " + m.solver1("asd"));
-    };
-
     return (
-      <>
-        <header>Advent of Code solutions 2021</header>
+      <WasmContext.Provider value={m}>
+        <Header>Advent of Code solutions 2021</Header>
         <MainContainer>
           <Aside>
             <UnorderedList>
@@ -104,12 +106,21 @@ wasm.then((m) => {
             </UnorderedList>
           </Aside>
           <Main>
-            <button onClick={handleClick}>Click me!</button>
             <MainRouter />
           </Main>
         </MainContainer>
-        <footer></footer>
-      </>
+        <Footer>
+          Made by{" "}
+          <a
+            href="https://matyasfodor.com"
+            target="_blank"
+            aria-label="Read more about Matyas"
+          >
+            Matyas
+          </a>{" "}
+          with 🩸 🥵 😢
+        </Footer>
+      </WasmContext.Provider>
     );
   };
 

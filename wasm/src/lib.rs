@@ -1,3 +1,4 @@
+pub mod day01;
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
@@ -16,8 +17,8 @@ pub fn welcome(name: &str) {
 }
 
 #[wasm_bindgen]
-pub fn solver1(input: &str) -> usize {
-    return input.len();
+pub fn day01(input: &str) -> usize {
+    return day01::main(input, false);
 }
 
 #[cfg(test)]

@@ -37,6 +37,9 @@ module.exports = {
       crateDirectory: path.resolve(__dirname, "wasm"),
     }),
   ],
+  resolve: {
+    extensions: [".js", ".ts", ".jsx", ".tsx"],
+  },
   mode: "development",
   devtool: "inline-source-map",
   experiments: {
