@@ -5,9 +5,10 @@
   "main": "index.js",
   "scripts": {
     "start": "webpack server",
-    "build:wasm": "cd wasm && cargo build --target wasm32-unknown-unknown",
+    "build:wasm": "cd wasm && /root/.cargo/bin/cargo build --target wasm32-unknown-unknown",
     "build:bindgen": "cd wasm && wasm-bindgen target/wasm32-unknown-unknown/debug/wasm.wasm --out-dir ../build",
-    "build": "npm run build:wasm && npm run build:bindgen && npx webpack"
+    "build": "npm run build:wasm && npm run build:bindgen && npx webpack",
+    "install:rust": "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | HOME=/root sh -s -- -y && HOME=/root /root/.cargo/bin/rustup install stable && HOME=/root /root/.cargo/bin/rustup default stable && HOME=/root /root/.cargo/bin/rustup target add wasm32-unknown-unknown"
   },
   "author": "",
   "license": "ISC",
