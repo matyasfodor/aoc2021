@@ -34,7 +34,7 @@ module.exports = {
       filename: "index.html",
     }),
     new WasmPackPlugin({
-      crateDirectory: path.resolve(__dirname, "."),
+      crateDirectory: path.resolve(__dirname, "wasm"),
     }),
   ],
   mode: "development",
