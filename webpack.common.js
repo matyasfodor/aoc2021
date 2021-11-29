@@ -1,8 +1,5 @@
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const WasmPackPlugin = require("@wasm-tool/wasm-pack-plugin");
-const BundleAnalyzerPlugin =
-  require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
-
 const path = require("path");
 
 module.exports = {
@@ -10,14 +7,6 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, "dist"),
     filename: "bundle.[hash].js",
-  },
-  devServer: {
-    compress: true,
-    port: 8080,
-    hot: true,
-    static: "./dist",
-    historyApiFallback: true,
-    open: true,
   },
   module: {
     rules: [
@@ -38,9 +27,11 @@ module.exports = {
     new WasmPackPlugin({
       crateDirectory: path.resolve(__dirname, "wasm"),
     }),
-    new BundleAnalyzerPlugin(),
   ],
   resolve: {
     extensions: [".js", ".ts", ".jsx", ".tsx"],
+  },
+  experiments: {
+    asyncWebAssembly: true,
   },
 };
