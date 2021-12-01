@@ -8,6 +8,7 @@
     "build:wasm": "cd wasm && cargo build --target wasm32-unknown-unknown",
     "build:bindgen": "cd wasm && wasm-bindgen target/wasm32-unknown-unknown/debug/wasm.wasm --out-dir ../build",
     "build": "npm run build:wasm && npm run build:bindgen && NODE_ENV=production npx webpack -c webpack.prod.js",
+    "install:rust": "amazon-linux-extras install rust1",
     "deploy": "firebase deploy"
   },
   "author": "",
