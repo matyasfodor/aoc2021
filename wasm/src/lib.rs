@@ -17,8 +17,8 @@ pub fn welcome(name: &str) {
 }
 
 #[wasm_bindgen]
-pub fn day01(input: &str) -> usize {
-    return day01::main(input, false);
+pub fn day01(input: &str, second: bool) -> usize {
+    return day01::main(input, second);
 }
 
 #[cfg(test)]
