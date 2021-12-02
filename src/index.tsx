@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 import styled from "styled-components";
 
@@ -14,7 +14,7 @@ import Day02 from "./solutions/day02";
 import Day03 from "./solutions/day03";
 import Day04 from "./solutions/day04";
 import Day05 from "./solutions/day05";
-import WasmContext from "./WasmContext";
+import WasmContext, { WasmModule } from "./WasmContext";
 
 const Header = styled.header`
   height: 50px;
@@ -61,73 +61,80 @@ const solutions: {
     path: "day/02",
     element: <Day02 />,
   },
-  {
-    name: "Day 03",
-    path: "day/03",
-    element: <Day03 />,
-  },
-  {
-    name: "Day 04",
-    path: "day/04",
-    element: <Day04 />,
-  },
-  {
-    name: "Day 05",
-    path: "day/05",
-    element: <Day05 />,
-  },
+  // {
+  //   name: "Day 03",
+  //   path: "day/03",
+  //   element: <Day03 />,
+  // },
+  // {
+  //   name: "Day 04",
+  //   path: "day/04",
+  //   element: <Day04 />,
+  // },
+  // {
+  //   name: "Day 05",
+  //   path: "day/05",
+  //   element: <Day05 />,
+  // },
 ];
 
-wasm.then((m) => {
-  const MainRouter = () => {
-    const element = useRoutes([
-      {
-        path: "/",
-        element: <div>This is home</div>,
-      },
-      ...solutions.map(({ path, element }) => ({ path, element })),
-    ]);
+const MainRouter = () => {
+  const element = useRoutes([
+    {
+      path: "/",
+      element: <div>This is home</div>,
+    },
+    ...solutions.map(({ path, element }) => ({ path, element })),
+  ]);
 
-    return element;
-  };
+  return element;
+};
 
-  const App = () => {
-    return (
-      <WasmContext.Provider value={m}>
-        <Header>Advent of Code solutions 2021</Header>
-        <MainContainer>
-          <Aside>
-            <UnorderedList>
-              {solutions.map((solution) => (
-                <li key={solution.path}>
-                  <NavLink to={solution.path}>{solution.name}</NavLink>
-                </li>
-              ))}
-            </UnorderedList>
-          </Aside>
-          <Main>
-            <MainRouter />
-          </Main>
-        </MainContainer>
-        <Footer>
-          Made by{" "}
-          <a
-            href="https://matyasfodor.com"
-            target="_blank"
-            aria-label="Read more about Matyas"
-          >
-            Matyas
-          </a>{" "}
-          with 🩸 🥵 and 😢.
-        </Footer>
-      </WasmContext.Provider>
-    );
-  };
+const App = () => {
+  const [wasmModule, setWasmModule] = useState<WasmModule | undefined>();
 
-  ReactDOM.render(
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>,
-    document.getElementById("root")
+  useEffect(() => {
+    wasm.then((m) => {
+      setWasmModule(m);
+    });
+  }, []);
+
+  console.log("Render");
+  return (
+    <WasmContext.Provider value={wasmModule}>
+      <Header>Advent of Code solutions 2021</Header>
+      <MainContainer>
+        <Aside>
+          <UnorderedList>
+            {solutions.map((solution) => (
+              <li key={solution.path}>
+                <NavLink to={solution.path}>{solution.name}</NavLink>
+              </li>
+            ))}
+          </UnorderedList>
+        </Aside>
+        <Main>
+          <MainRouter />
+        </Main>
+      </MainContainer>
+      <Footer>
+        Made by{" "}
+        <a
+          href="https://matyasfodor.com"
+          target="_blank"
+          aria-label="Read more about Matyas"
+        >
+          Matyas
+        </a>{" "}
+        with 🩸 🥵 and 😢.
+      </Footer>
+    </WasmContext.Provider>
   );
-});
+};
+
+ReactDOM.render(
+  <BrowserRouter>
+    <App />
+  </BrowserRouter>,
+  document.getElementById("root")
+);
