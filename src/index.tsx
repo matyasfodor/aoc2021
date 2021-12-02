@@ -2,13 +2,7 @@ import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 import styled from "styled-components";
 
-import {
-  BrowserRouter,
-  NavLink,
-  Outlet,
-  Routes,
-  useRoutes,
-} from "react-router-dom";
+import { BrowserRouter, NavLink, useRoutes } from "react-router-dom";
 import Day01 from "./solutions/day01";
 import Day02 from "./solutions/day02";
 import Day03 from "./solutions/day03";
