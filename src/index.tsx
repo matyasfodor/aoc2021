@@ -118,7 +118,7 @@ wasm.then((m) => {
           >
             Matyas
           </a>{" "}
-          with 🩸 🥵 😢
+          with 🩸 🥵 and 😢.
         </Footer>
       </WasmContext.Provider>
     );

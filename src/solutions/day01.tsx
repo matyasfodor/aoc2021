@@ -1,5 +1,12 @@
 import React, { ChangeEvent, useContext, useState } from "react";
+import styled from "styled-components";
+
 import WasmContext from "../WasmContext";
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
 
 const solution = () => {
   const [input, setInput] = useState("");
@@ -13,18 +20,18 @@ const solution = () => {
     setSecond(e.target.checked);
   };
   return (
-    <div>
-      <label>
-        Use second
-        <input type="checkbox" checked={isSecond} onChange={checkboxHandler} />
-      </label>
+    <Container>
       <textarea
         value={input}
         onChange={(e) => setInput(e.target.value)}
       ></textarea>
+      <label>
+        Second solution
+        <input type="checkbox" checked={isSecond} onChange={checkboxHandler} />
+      </label>
       <button onClick={clickHandler}>Solve it!</button>
       <pre>{answer}</pre>
-    </div>
+    </Container>
   );
 };
 
