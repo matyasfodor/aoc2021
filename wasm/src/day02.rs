@@ -48,8 +48,6 @@ fn direction_1(acc: State, line: &str) -> State {
 }
 
 pub fn main(s: &str, second: bool) -> usize {
-  // let mut depth: usize = 0;
-  // let mut horizontal = 0;
   let end_state = s.split_terminator("\n").fold(
     State {
       depth: 0,

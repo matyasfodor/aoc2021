@@ -55,11 +55,11 @@ const solutions: {
     path: "day/02",
     element: <Day02 />,
   },
-  // {
-  //   name: "Day 03",
-  //   path: "day/03",
-  //   element: <Day03 />,
-  // },
+  {
+    name: "Day 03",
+    path: "day/03",
+    element: <Day03 />,
+  },
   // {
   //   name: "Day 04",
   //   path: "day/04",

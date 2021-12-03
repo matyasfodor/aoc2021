@@ -1,5 +1,10 @@
-import React, { useState } from "react";
+import React, { useContext } from "react";
+import Solution from "../components/Solution";
+import WasmContext from "../WasmContext";
 
-const solution = () => <div>This is day 03</div>;
+const Day01 = () => {
+  const wasmModule = useContext(WasmContext);
+  return <Solution solution={(...args) => wasmModule.day03(...args)} />;
+};
 
-export default solution;
+export default Day01;
