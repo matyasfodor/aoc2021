@@ -61,6 +61,7 @@ impl TreeNode {
     };
     sofar = sofar << 1;
 
+    // My brain was fried, I could not get this clause in a simpler form.
     let child = match (len_zeros, len_ones) {
       (0, _) => {
         sofar |= 1;
@@ -90,6 +91,36 @@ impl TreeNode {
   }
 }
 
+/// Solution for the second task
+/// Build a trie from the nodes, where each node knows the number of report lines under it
+/// And references to the binary subtrees
+/// A simple binary traversal can retrieve the oxigen generator rating and the CO2 scrubber rating
+/// Complexity is O(n) for building the tree, O(log(n)) for getting the ratings
+fn second_solution(s: &str) -> usize {
+  let binary_tree = s.split_terminator("\n").fold(
+    TreeNode {
+      count: 0,
+      zeros: None,
+      ones: None,
+    },
+    |mut acc, line| {
+      acc.insert(line, 0);
+      acc
+    },
+  );
+
+  let oxigen = binary_tree.find_trace(|a, b| a >= b);
+
+  let co2 = binary_tree.find_trace(|a, b| a < b);
+
+  oxigen * co2
+}
+
+/// Solution for the first task
+/// Iterate through the input with a vector `end_state`, which is initialised with ones,
+/// and has the length equal to the number of each line.
+/// For each line, iterate over each character and multiply the char by 2 if the char is 1, divide by 2 if it's 0.
+/// At the end of the iteration, `end_state[i] > 1` means there are more 1s in that column than zeroes
 fn first_solution(s: &str) -> usize {
   let end_state: Option<Vec<f32>> = s.split_terminator("\n").fold(None, |acc, line| {
     let mut new_acc = match acc {
@@ -109,38 +140,21 @@ fn first_solution(s: &str) -> usize {
   });
 
   let unwrapped = end_state.unwrap();
-  let binary = unwrapped.iter().fold(0, |prev, next| {
+  let gamma_rate = unwrapped.iter().fold(0, |prev, next| {
     let mut prev_copy = prev;
+    // Push a zero at the end of the binary number
     prev_copy = prev_copy << 1;
 
     if *next > 1.0 {
+      // Flip the last bit to 1
       prev_copy |= 1;
     }
     prev_copy
   });
-  let negated_binary = !binary % (1 << (unwrapped.len()));
+  // Negate gamma rate, and cap the binary length.
+  let epsilon_rate = !gamma_rate % (1 << (unwrapped.len()));
 
-  binary * negated_binary
-}
-
-fn second_solution(s: &str) -> usize {
-  let binary_tree = s.split_terminator("\n").fold(
-    TreeNode {
-      count: 0,
-      zeros: None,
-      ones: None,
-    },
-    |mut acc, line| {
-      acc.insert(line, 0);
-      acc
-    },
-  );
-
-  let oxigen = binary_tree.find_trace(|a, b| a >= b);
-
-  let co2 = binary_tree.find_trace(|a, b| a < b);
-
-  oxigen * co2
+  gamma_rate * epsilon_rate
 }
 
 pub fn main(s: &str, second: bool) -> usize {
