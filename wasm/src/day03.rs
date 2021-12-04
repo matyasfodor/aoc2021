@@ -168,7 +168,7 @@ pub fn main(s: &str, second: bool) -> usize {
 #[cfg(test)]
 mod tests {
   #[test]
-  fn it_works_first() {
+  fn d3_first() {
     let input =
       "00100\n11110\n10110\n10111\n10101\n01111\n00111\n11100\n10000\n11001\n00010\n01010\n";
     let res = super::main(input, false);
@@ -176,7 +176,7 @@ mod tests {
   }
 
   #[test]
-  fn tree_works() {
+  fn d3_second() {
     let input =
       "00100\n11110\n10110\n10111\n10101\n01111\n00111\n11100\n10000\n11001\n00010\n01010\n";
     let res = super::main(input, true);
