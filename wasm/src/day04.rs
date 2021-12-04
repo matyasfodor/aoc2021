@@ -89,23 +89,20 @@ pub fn main(s: &str, second: bool) -> usize {
   let tables: Vec<Vec<Vec<usize>>> = read_iter
     .fold(vec![vec![]], |mut acc, line| {
       if line.len() == 0 {
-        acc.insert(0, vec![]);
+        acc.push(vec![]);
       } else {
-        // couldn't figure out how to append to the last element, so instead I'm growing the first element
-        // Should find a better solution!
-        acc[0].push(line);
+        acc.last_mut().expect("No last element").push(line);
       }
       acc
     })
     .iter()
-    .rev() // reversing, since the lines were grouped in reverse order
     .map(|lines| {
       let ret: Vec<Vec<usize>> = lines
         .iter()
         .map(|line| {
           line
             .split_whitespace()
-            .map(|e| e.parse().expect("Not a number "))
+            .map(|e| e.parse().expect("Not a number"))
             .collect()
         })
         .collect();
