@@ -65,11 +65,11 @@ const solutions: {
     path: "day/04",
     element: <Day04 />,
   },
-  // {
-  //   name: "Day 05",
-  //   path: "day/05",
-  //   element: <Day05 />,
-  // },
+  {
+    name: "Day 05",
+    path: "day/05",
+    element: <Day05 />,
+  },
 ];
 
 const MainRouter = () => {
