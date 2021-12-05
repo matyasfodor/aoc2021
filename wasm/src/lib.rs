@@ -43,7 +43,7 @@ pub fn day04(input: &str, second: bool) -> usize {
 
 #[wasm_bindgen]
 pub fn day05(input: &str, second: bool) -> usize {
-    return day04::main(input, second);
+    return day05::main(input, second);
 }
 
 #[cfg(test)]

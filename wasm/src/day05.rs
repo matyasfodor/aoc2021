@@ -1,8 +1,12 @@
+extern crate console_error_panic_hook;
+
 use itertools::Itertools;
 use std::cmp;
 use std::collections::HashSet;
 
 pub fn main(s: &str, second: bool) -> usize {
+  console_error_panic_hook::set_once();
+
   let coordinates = {
     let coordinates_iterator = s.split_terminator("\n").map(|line| {
       line
