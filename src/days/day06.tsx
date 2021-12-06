@@ -1,9 +1,11 @@
 import React from "react";
 import Solution from "../components/Solution";
-import { solution } from "../solutions/day06";
+import { day06solution } from "../solutions/day06";
 
 const Day01 = () => {
-  return <Solution solution={(input, second) => solution(input, 80, second)} />;
+  return (
+    <Solution solution={(input, second) => day06solution(input, second)} />
+  );
 };
 
 export default Day01;

@@ -12,10 +12,7 @@ export function progressState(
   return ret;
 }
 
-export function solution(input: string, days: number, second: boolean): number {
-  let lifetimes = input.split(",").map((e) => {
-    return parseInt(e);
-  });
+export function solution(lifetimes: number[], days: number): number {
   // State holds a histogram of states
   let state = lifetimes.reduce((acc: Record<number, number>, next) => {
     acc[next] = (acc[next] ?? 0) + 1;
@@ -30,4 +27,12 @@ export function solution(input: string, days: number, second: boolean): number {
   const result = Object.values(state).reduce((a, b) => a + b);
 
   return result;
+}
+
+export function day06solution(input: string, second: boolean): number {
+  const days = second ? 256 : 80;
+  let lifetimes = input.split(",").map((e) => {
+    return parseInt(e);
+  });
+  return solution(lifetimes, days);
 }
