@@ -9,7 +9,8 @@
     "build:bindgen": "cd wasm && wasm-bindgen target/wasm32-unknown-unknown/debug/wasm.wasm --out-dir ../build",
     "build": "npm run build:wasm && npm run build:bindgen && NODE_ENV=production npx webpack -c webpack.prod.js",
     "install:rust": "amazon-linux-extras install rust1",
-    "deploy": "firebase deploy"
+    "deploy": "firebase deploy",
+    "test": "jest"
   },
   "author": "",
   "license": "ISC",
@@ -35,6 +36,8 @@
     "babel-core": "^6.26.3",
     "babel-loader": "^8.2.3",
     "html-webpack-plugin": "^5.5.0",
+    "jest": "^27.4.3",
+    "ts-node": "^10.4.0",
     "webpack": "^5.64.4",
     "webpack-bundle-analyzer": "^4.5.0",
     "webpack-cli": "^4.9.1",

@@ -3,11 +3,12 @@ import ReactDOM from "react-dom";
 import styled from "styled-components";
 
 import { BrowserRouter, NavLink, useRoutes } from "react-router-dom";
-import Day01 from "./solutions/day01";
-import Day02 from "./solutions/day02";
-import Day03 from "./solutions/day03";
-import Day04 from "./solutions/day04";
-import Day05 from "./solutions/day05";
+import Day01 from "./days/day01";
+import Day02 from "./days/day02";
+import Day03 from "./days/day03";
+import Day04 from "./days/day04";
+import Day05 from "./days/day05";
+import Day06 from "./days/day06";
 import WasmContext, { WasmModule } from "./WasmContext";
 
 const Header = styled.header`
@@ -69,6 +70,11 @@ const solutions: {
     name: "Day 05",
     path: "day/05",
     element: <Day05 />,
+  },
+  {
+    name: "Day 06",
+    path: "day/06",
+    element: <Day06 />,
   },
 ];
 
