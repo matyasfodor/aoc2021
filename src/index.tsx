@@ -9,6 +9,7 @@ import Day03 from "./days/day03";
 import Day04 from "./days/day04";
 import Day05 from "./days/day05";
 import Day06 from "./days/day06";
+import Day07 from "./days/day07";
 import WasmContext, { WasmModule } from "./WasmContext";
 
 const Header = styled.header`
@@ -75,6 +76,11 @@ const solutions: {
     name: "Day 06",
     path: "day/06",
     element: <Day06 />,
+  },
+  {
+    name: "Day 07",
+    path: "day/07",
+    element: <Day07 />,
   },
 ];
 
