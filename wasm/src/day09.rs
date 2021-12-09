@@ -1,83 +1,115 @@
-use itertools::Itertools;
+use std::collections::HashMap;
 use std::iter::Iterator;
 use std::vec::Vec;
 
-fn solution1(heights: Vec<Vec<usize>>) -> usize {
-  // heights.iter().enumerate().map(|(row_index, row)| {
+fn get_neighbors(mx: &Vec<Vec<usize>>, x: usize, y: usize) -> Vec<(usize, usize)> {
+  let mut neighbors = vec![];
+  if y > 0 {
+    neighbors.push((x, y - 1));
+  }
+  if x > 0 {
+    neighbors.push((x - 1, y));
+  }
+  if x < mx.len() - 1 {
+    neighbors.push((x + 1, y));
+  }
+  if y < mx[0].len() - 1 {
+    neighbors.push((x, y + 1));
+  }
+  neighbors
+}
 
-  // });
+fn get_mins(heights: &Vec<Vec<usize>>) -> Vec<(usize, (usize, usize))> {
   let mut mins = vec![];
   for row_index in 0..heights.len() {
     for col_index in 0..heights[row_index].len() {
       let elem = heights[row_index][col_index];
-      // prev row
-      if row_index > 0 {
-        if let Some(prev_row) = heights.get(row_index - 1) {
-          if elem >= prev_row[col_index] {
-            continue;
+
+      let neighbors = get_neighbors(&heights, row_index, col_index);
+      if neighbors.iter().all(|(x, y)| elem < heights[*x][*y]) {
+        mins.push((elem, (row_index, col_index)));
+      }
+    }
+  }
+  mins
+}
+
+fn solution1(heights: &Vec<Vec<usize>>) -> usize {
+  let mins = get_mins(&heights);
+
+  mins.iter().map(|(e, _)| e + 1).sum()
+}
+
+fn print_state(flood_map: &Vec<Vec<usize>>, cntr: usize) {
+  println!("Iteration {}", cntr);
+  flood_map.iter().for_each(|line| {
+    let line_to_print: String = line.iter().map(|&number| number.to_string()).collect();
+    println!("{}", line_to_print);
+  });
+  println!("");
+}
+
+fn solution2(heights: &Vec<Vec<usize>>) -> usize {
+  let mins = get_mins(&heights);
+  let mut flood_map: Vec<Vec<usize>> = heights.iter().map(|row| vec![0; row.len()]).collect();
+  mins.iter().enumerate().for_each(|(index, (_, (x, y)))| {
+    flood_map[*x][*y] = index + 1;
+  });
+
+  // println!("Map {:#?}", flood_map);
+  let mut did_update = false;
+  // let mut cntr = 0;
+  loop {
+    did_update = false;
+    // cntr += 1;
+    // print_state(&flood_map, cntr);
+    let mut new_flood_map: Vec<Vec<usize>> = heights.iter().map(|row| vec![0; row.len()]).collect();
+    for row_index in 0..heights.len() {
+      for col_index in 0..heights[row_index].len() {
+        if heights[row_index][col_index] != 9 {
+          let mut did_update_local = false;
+          let current_flood_map_val = flood_map[row_index][col_index];
+          let neighbors = get_neighbors(&flood_map, row_index, col_index);
+          neighbors.iter().for_each(|(x, y)| {
+            let flood_map_val = flood_map[*x][*y];
+            if current_flood_map_val < flood_map_val {
+              new_flood_map[row_index][col_index] = flood_map_val;
+              did_update_local = true;
+            }
+          });
+          if !did_update_local {
+            new_flood_map[row_index][col_index] = current_flood_map_val;
+          }
+          if did_update_local {
+            did_update = true;
           }
         }
       }
+    }
+    flood_map = new_flood_map;
 
-      if col_index > 0 {
-        if let Some(west) = heights[row_index].get(col_index - 1) {
-          if elem >= *west {
-            continue;
-          }
-        }
-      }
-
-      if let Some(east) = heights[row_index].get(col_index + 1) {
-        if elem >= *east {
-          continue;
-        }
-      }
-
-      if let Some(next_row) = heights.get(row_index + 1) {
-        if elem >= next_row[col_index] {
-          continue;
-        }
-      }
-      mins.push(elem);
+    if !did_update {
+      break;
     }
   }
 
-  mins.iter().map(|e| e + 1).sum()
+  // Count the occurrence of each item
+  let counter: HashMap<usize, usize> =
+    flood_map
+      .iter()
+      .flatten()
+      .fold(HashMap::new(), |mut counter, &element| {
+        if element > 0 {
+          *counter.entry(element).or_insert(0) += 1;
+        }
+        //
+        counter
+      });
+  let mut values: Vec<usize> = counter.values().map(|&e| e).collect();
+  values.sort_by(|a, b| b.cmp(a));
+  let res = values[0..3].iter().fold(1, |prod, x| prod * x);
+  res
 }
-
-fn solution2(heights: Vec<Vec<usize>>) -> usize {
-  0
-}
-
-trait Sliding<T> {
-  fn sliding_window(&self) -> dyn Iterator<Item = (Option<T>, Option<T>, Option<T>)>;
-}
-
-// impl<T> Sliding<T> for Vec<T> {
-//   fn sliding_window(&self) -> dyn Iterator<Item=(Option<T>, Option<T>, Option<T>)> {
-//     let ret = self.iter().enumerate().map(|(index, element)| {
-//       (
-//         if index - 1 < 0 {
-//           None
-//         } else {
-//           Some(&self[index - 1])
-//         },
-//         Some(&self[index]),
-//         Some(if index + 1 == self.len() {
-//           None
-//         } else {
-//           Some(&self[index + 1])
-//         }),
-//       )
-//     });
-//     Box::new(ret) as Box<dyn Iterator<Item = (Option<T>, Option<T>, Option<T>)>>
-
-//     // for n in 0..self.len() {
-
-//     // }
-//     (None, None, None)
-//   }
-// }
 
 pub fn main(s: &str, second: bool) -> usize {
   let heights: Vec<Vec<usize>> = s
@@ -90,11 +122,10 @@ pub fn main(s: &str, second: bool) -> usize {
     })
     .collect();
 
-  println!("Heights {:#?}", heights);
   if second {
-    solution2(heights)
+    solution2(&heights)
   } else {
-    solution1(heights)
+    solution1(&heights)
   }
 }
 
@@ -111,6 +142,6 @@ mod tests {
   fn day09_second() {
     let input = "2199943210\n3987894921\n9856789892\n8767896789\n9899965678\n";
     let res = super::main(input, true);
-    assert_eq!(res, 5);
+    assert_eq!(res, 1134);
   }
 }
