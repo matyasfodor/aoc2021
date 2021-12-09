@@ -1,5 +1,4 @@
 use itertools::Itertools;
-use std::collections::BinaryHeap;
 use std::collections::HashMap;
 use std::collections::HashSet;
 use std::vec::Vec;
@@ -156,25 +155,6 @@ fn solution02(input: &Vec<Vec<Vec<&str>>>) -> usize {
     .iter()
     .map(|line| solve_line(&line[0], &line[1]))
     .sum()
-  // let set_of_digits = input.iter().fold(HashSet::new(), |set|)
-  // let set_of_digits: HashSet<String> =
-  //   HashSet::from_iter(input.iter().flatten().map(|e| sort_item(e)));
-  // // HashSet::from_iter(input.iter().flatten().map(|e| (**e).to_owned()));
-
-  // let letter_mapping = set_of_digits
-  //   .iter()
-  //   .fold(HashMap::new(), |mut mapping, item| {
-  //     // item.
-  //     match item.len() {
-  //       2 => mapping.insert(item, 1),
-  //       3 => mapping.insert(item, 7),
-  //       4 => mapping.insert(item, 4),
-  //       7 => mapping.insert(item, 8),
-  //       _ => None,
-  //     };
-  //     mapping
-  //   });
-  // println!("mapping: {:#?}", letter_mapping);
 }
 
 pub fn main(s: &str, second: bool) -> usize {
