@@ -123,7 +123,6 @@ const App = () => {
     });
   }, []);
 
-  console.log("Render");
   return (
     <WasmContext.Provider value={wasmModule}>
       <Header>Advent of Code solutions 2021</Header>
