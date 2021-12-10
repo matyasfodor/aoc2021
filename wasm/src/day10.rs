@@ -48,7 +48,7 @@ fn find_closing_sequence(line: &str) -> Option<String> {
   )
 }
 
-fn completion_cost(completion: &str) -> usize {
+fn completion_cost(completion: &str) -> u64 {
   let cost_map = HashMap::from([(')', 1), (']', 2), ('}', 3), ('>', 4)]);
 
   completion
@@ -56,7 +56,7 @@ fn completion_cost(completion: &str) -> usize {
     .fold(0, |sum, new_char| sum * 5 + cost_map[&new_char])
 }
 
-pub fn main(s: &str, second: bool) -> usize {
+pub fn main(s: &str, second: bool) -> u64 {
   let lines = s.split_terminator("\n");
 
   if !second {
@@ -67,7 +67,7 @@ pub fn main(s: &str, second: bool) -> usize {
       .map(|illegal_char| illetgal_character_map[&illegal_char])
       .sum()
   } else {
-    let mut line_costs: Vec<usize> = lines
+    let mut line_costs: Vec<u64> = lines
       .filter_map(find_closing_sequence)
       .map(|e| completion_cost(&e))
       .collect();
