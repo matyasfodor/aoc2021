@@ -11,28 +11,29 @@ fn pathfinder(
   node: &str,
   visited: &HashSet<&str>,
   trail: &str,
-) -> usize {
+) -> HashSet<String> {
   if node == END {
-    // println!("Visited {:#?}", visited);
-    // println!("Trail: {}", trail);
-    return 1;
+    return HashSet::from([trail.to_string()]);
   }
-  let mut cntr = 0;
-  for neighbor in graph.get(node).unwrap_or(&vec![]).iter() {
-    if !visited.contains(neighbor) {
-      let mut child_visited = visited.clone();
-      if neighbor.chars().next().unwrap().is_lowercase() {
-        child_visited.insert(neighbor);
+  graph
+    .get(node)
+    .unwrap_or(&vec![])
+    .iter()
+    .fold(HashSet::new(), |mut set_of_trails, neighbor| {
+      if !visited.contains(neighbor) {
+        let mut child_visited = visited.clone();
+        if neighbor.chars().next().unwrap().is_lowercase() {
+          child_visited.insert(neighbor);
+        }
+        set_of_trails.extend(pathfinder(
+          graph,
+          neighbor,
+          &child_visited,
+          format!("{},{}", trail, neighbor).as_ref(),
+        ));
       }
-      cntr += pathfinder(
-        graph,
-        neighbor,
-        &child_visited,
-        format!("{},{}", trail, neighbor).as_ref(),
-      );
-    }
-  }
-  cntr
+      set_of_trails
+    })
 }
 
 fn solution1(graph: &HashMap<&str, std::vec::Vec<&str>>) -> usize {
@@ -42,9 +43,17 @@ fn solution1(graph: &HashMap<&str, std::vec::Vec<&str>>) -> usize {
     &HashSet::from([START]),
     format!("{}", START).as_ref(),
   )
+  .len()
 }
 
 fn solution2(graph: &HashMap<&str, std::vec::Vec<&str>>) -> usize {
+  let small_caves = graph.keys().filter(|cave| {
+    cave
+      .chars()
+      .next()
+      .expect("Expected cave to have at least one char")
+      .is_lowercase()
+  });
   0
 }
 
