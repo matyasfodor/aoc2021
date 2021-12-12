@@ -10,6 +10,7 @@ fn pathfinder(
   graph: &HashMap<&str, std::vec::Vec<&str>>,
   node: &str,
   visited: &HashSet<&str>,
+  can_visit_twice: &HashSet<&str>,
   trail: &str,
 ) -> HashSet<String> {
   if node == END {
@@ -20,15 +21,26 @@ fn pathfinder(
     .unwrap_or(&vec![])
     .iter()
     .fold(HashSet::new(), |mut set_of_trails, neighbor| {
-      if !visited.contains(neighbor) {
+      if !visited.contains(neighbor) || can_visit_twice.contains(neighbor) {
         let mut child_visited = visited.clone();
         if neighbor.chars().next().unwrap().is_lowercase() {
           child_visited.insert(neighbor);
         }
+
+        let child_can_visit_twice = if visited.contains(neighbor) {
+          can_visit_twice
+            .difference(&HashSet::from([*neighbor]))
+            .map(|e| *e)
+            .collect()
+        } else {
+          can_visit_twice.clone()
+        };
+
         set_of_trails.extend(pathfinder(
           graph,
           neighbor,
           &child_visited,
+          &child_can_visit_twice,
           format!("{},{}", trail, neighbor).as_ref(),
         ));
       }
@@ -41,20 +53,39 @@ fn solution1(graph: &HashMap<&str, std::vec::Vec<&str>>) -> usize {
     graph,
     START,
     &HashSet::from([START]),
+    &HashSet::new(),
     format!("{}", START).as_ref(),
   )
   .len()
 }
 
 fn solution2(graph: &HashMap<&str, std::vec::Vec<&str>>) -> usize {
-  let small_caves = graph.keys().filter(|cave| {
-    cave
-      .chars()
-      .next()
-      .expect("Expected cave to have at least one char")
-      .is_lowercase()
+  let small_caves = graph
+    .keys()
+    .filter(|cave| {
+      cave
+        .chars()
+        .next()
+        .expect("Expected cave to have at least one char")
+        .is_lowercase()
+    })
+    .filter(|cave| *cave != &START && *cave != &END);
+
+  // println!("Small caves {:#?}", small_caves);
+
+  let trails = small_caves.fold(HashSet::new(), |mut trails, small_cave| {
+    trails.extend(pathfinder(
+      graph,
+      START,
+      &HashSet::from([START]),
+      &HashSet::from([*small_cave]),
+      format!("{}", START).as_ref(),
+    ));
+    trails
   });
-  0
+  // println!("Trails {:#?}", trails);
+
+  trails.len()
 }
 
 pub fn main(s: &str, second: bool) -> usize {
@@ -100,6 +131,6 @@ mod tests {
   fn day_12_second() {
     let input = "start-A\nstart-b\nA-c\nA-b\nb-d\nA-end\nb-end\n";
     let res = super::main(input, true);
-    assert_eq!(res, 5);
+    assert_eq!(res, 36);
   }
 }
