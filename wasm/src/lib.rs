@@ -84,7 +84,7 @@ pub fn day12(input: &str, second: bool) -> usize {
 }
 
 #[wasm_bindgen]
-pub fn day13(input: &str, second: bool) -> usize {
+pub fn day13(input: &str, second: bool) -> String {
     return day13::main(input, second);
 }
 

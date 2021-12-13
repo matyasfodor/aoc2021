@@ -9,7 +9,7 @@ const Container = styled.div`
 `;
 
 type SolutionProps = {
-  solution: (str: string, isSecond: boolean) => number | BigInt;
+  solution: (str: string, isSecond: boolean) => number | BigInt | string;
 };
 
 const Solution = ({ solution }: SolutionProps) => {

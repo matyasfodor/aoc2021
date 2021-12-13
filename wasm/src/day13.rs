@@ -48,8 +48,46 @@ fn solution1(state: &State) -> usize {
   new_coordinates.len()
 }
 
-fn solution2(state: &State) -> usize {
-  0
+fn transpose<T>(v: Vec<Vec<T>>) -> Vec<Vec<T>>
+where
+  T: Clone,
+{
+  assert!(!v.is_empty());
+  (0..v[0].len())
+    .map(|i| v.iter().map(|inner| inner[i].clone()).collect::<Vec<T>>())
+    .collect()
+}
+
+fn solution2(state: &State) -> String {
+  let final_coords = state.instructions.iter().fold(
+    state.coordinates.clone(),
+    |prev_coordinates, (direction, number)| {
+      fold_instruction(&prev_coordinates, *direction, *number)
+    },
+  );
+
+  let (x_max, y_max) = final_coords
+    .iter()
+    .fold((0, 0), |(prev_x, prev_y), (x, y)| {
+      (
+        if x > &prev_x { *x } else { prev_x },
+        if y > &prev_y { *y } else { prev_y },
+      )
+    });
+
+  // let ret = vec![vec![0; y_max + 1]; x_max + 1];
+  let final_map =
+    final_coords
+      .iter()
+      .fold(vec![vec![" "; y_max + 1]; x_max + 1], |mut map, (x, y)| {
+        map[*x][*y] = "1";
+        map
+      });
+  transpose(final_map)
+    .iter()
+    .map(|line| line.join(""))
+    .collect::<Vec<String>>()
+    .join("\n")
 }
 
 fn read_input(s: &str) -> State {
@@ -98,12 +136,12 @@ fn read_input(s: &str) -> State {
   state
 }
 
-pub fn main(s: &str, second: bool) -> usize {
+pub fn main(s: &str, second: bool) -> String {
   let state = read_input(s);
   if second {
     solution2(&state)
   } else {
-    solution1(&state)
+    format!("{}", solution1(&state))
   }
 }
 
@@ -113,13 +151,13 @@ mod tests {
   fn day13_first() {
     let input = "6,10\n0,14\n9,10\n0,3\n10,4\n4,11\n6,0\n6,12\n4,1\n0,13\n10,12\n3,4\n3,0\n8,4\n1,10\n2,14\n8,10\n9,0\n\nfold along y=7\nfold along x=5\n";
     let res = super::main(input, false);
-    assert_eq!(res, 17);
+    assert_eq!(res, "17");
   }
 
   #[test]
   fn day_13_second() {
     let input = "6,10\n0,14\n9,10\n0,3\n10,4\n4,11\n6,0\n6,12\n4,1\n0,13\n10,12\n3,4\n3,0\n8,4\n1,10\n2,14\n8,10\n9,0\n\nfold along y=7\nfold along x=5\n";
     let res = super::main(input, true);
-    assert_eq!(res, 36);
+    assert_eq!(res, "11111\n10001\n10001\n10001\n11111");
   }
 }
