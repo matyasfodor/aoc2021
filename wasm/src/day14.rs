@@ -5,40 +5,39 @@ use std::collections::LinkedList;
 use std::vec::Vec;
 
 struct State {
-  polymer: Vec<char>,
+  polymer: HashMap<(char, char), u64>,
   instructions: HashMap<(char, char), char>,
 }
 
 fn apply_instructions(
-  polymer: &Vec<char>,
+  polymer: &HashMap<(char, char), u64>,
   instructions: &HashMap<(char, char), char>,
-) -> Vec<char> {
-  let mut ret: Vec<char> = polymer
-    .iter()
-    .tuple_windows::<(_, _)>()
-    .flat_map(|(left, right)| {
-      if let Some(new_element) = instructions.get(&(*left, *right)) {
-        Vec::from([*left, *new_element])
-      } else {
-        Vec::from([*left])
-      }
-    })
-    .collect();
-  ret.push(*polymer.last().unwrap());
-  ret
+) -> HashMap<(char, char), u64> {
+  polymer.keys().fold(HashMap::new(), |mut acc, key| {
+    let elements = if let Some(entity) = instructions.get(key) {
+      vec![
+        ((key.0, *entity), polymer[key]),
+        ((*entity, key.1), polymer[key]),
+      ]
+    } else {
+      vec![(*key, polymer[key])]
+    };
+    for element in elements {
+      *acc.entry(element.0).or_insert(0) += element.1;
+    }
+    acc
+  })
 }
 
-fn solution(state: &State, times: usize) -> usize {
+fn solution(state: &State, times: u64) -> u64 {
   let mut polymer = state.polymer.clone();
   for i in 0..times {
-    // println!("Polymer: {:#?}", polymer);
     polymer = apply_instructions(&polymer, &state.instructions);
-    let sum: usize = polymer.len();
+    let sum: u64 = polymer.values().sum();
     println!("At step {} the sum is {}", i, sum);
-    // println!("Polymer is {:#?}", polymer);
   }
   let char_counts = polymer.iter().fold(HashMap::new(), |mut map, charcter| {
-    *map.entry(charcter).or_insert(0) += 1;
+    *map.entry(charcter.0 .0).or_insert(0) += charcter.1;
     map
   });
   println!("Char counts value {:#?}", char_counts);
@@ -66,12 +65,18 @@ fn read_input(input: &str) -> State {
     .collect();
 
   State {
-    polymer: first_line.chars().collect(),
+    polymer: format!("{}_", first_line)
+      .chars()
+      .tuple_windows::<(_, _)>()
+      .fold(HashMap::new(), |mut acc, entry| {
+        *acc.entry(entry).or_insert(0) += 1;
+        acc
+      }),
     instructions,
   }
 }
 
-pub fn main(s: &str, second: bool) -> usize {
+pub fn main(s: &str, second: bool) -> u64 {
   let state = read_input(s);
   if second {
     solution(&state, 40)
@@ -93,6 +98,6 @@ mod tests {
   fn day_14_second() {
     let input = "NNCB\n\nCH -> B\nHH -> N\nCB -> H\nNH -> C\nHB -> C\nHC -> B\nHN -> C\nNN -> C\nBH -> H\nNC -> B\nNB -> B\nBN -> B\nBB -> N\nBC -> B\nCC -> N\nCN -> C\n";
     let res = super::main(input, true);
-    assert_eq!(res, 5);
+    assert_eq!(res, 2188189693529);
   }
 }
