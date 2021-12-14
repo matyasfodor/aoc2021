@@ -1,46 +1,71 @@
 use itertools::Itertools;
 use regex::Regex;
-use std::collections::HashSet;
+use std::collections::HashMap;
 use std::collections::LinkedList;
 use std::vec::Vec;
 
+#[derive(Debug, Default)]
 struct Instruction {
   matcher: (char, char),
   element: char,
 }
 
 struct State {
-  polymer: LinkedList<char>,
+  polymer: HashMap<(char, char), usize>,
   instructions: Vec<Instruction>,
 }
 
 fn apply_instructions(
-  polymer: &LinkedList<char>,
+  polymer: &HashMap<(char, char), usize>,
   instructions: &Vec<Instruction>,
-) -> LinkedList<char> {
+) -> HashMap<(char, char), usize> {
   let mut new_polymer = polymer.clone();
   for instruction in instructions {
-    //
-    // for (left, right) in polymer.iter().tuple_windows::<(_, _)>() {
-    //   if *left == instruction.matcher.0 && *right == instruction.matcher.1 {
-    //     //
-    //   }
-    // }
-    let cursor = polymer.cursor_front_mut();
-    cursor.move_next();
-    while cursor.peek_next().is_some() {
-      cursor.move_next();
+    // println!("Polymer: {:#?} {:#?}", new_polymer, instruction);
+
+    // if let Some(original_count) = new_polymer.get(&instruction.matcher) {
+    let original_count_wrapped = polymer.get(&instruction.matcher);
+    if original_count_wrapped.is_none() {
+      continue;
     }
+    println!("instruction {:#?}", instruction);
+
+    let original_count = *original_count_wrapped.unwrap();
+    *new_polymer
+      .entry((instruction.matcher.0, instruction.element))
+      .or_insert(0) += original_count;
+    *new_polymer
+      .entry((instruction.element, instruction.matcher.1))
+      .or_insert(0) += original_count;
+    *new_polymer.entry(instruction.matcher).or_insert(0) = 0
+    // }
+
+    // new_polymer[&(instruction.matcher.0, instruction.element)] += original_count;
+    // new_polymer[&(instruction.element, instruction.matcher.0)] += original_count;
+    // new_polymer[&instruction.matcher] = 0;
   }
   new_polymer
 }
 
 fn solution1(state: &State) -> usize {
   let mut polymer = state.polymer.clone();
-  for _ in 0..10 {
+  for i in 0..1 {
+    // println!("Polymer: {:#?}", polymer);
     polymer = apply_instructions(&polymer, &state.instructions);
+    let sum: usize = polymer.values().sum();
+    println!("At step {} the sum is {}", i, sum);
+    println!("Polymer is {:#?}", polymer);
   }
-  0
+  let char_counts = polymer
+    .iter()
+    .fold(HashMap::new(), |mut map, ((left, _), value)| {
+      *map.entry(left).or_insert(0) += value;
+      map
+    });
+  println!("Char counts value {:#?}", char_counts);
+  let max = char_counts.values().max().unwrap();
+  let min = char_counts.values().min().unwrap();
+  max - min
 }
 
 fn solution2(state: &State) -> usize {
@@ -66,7 +91,13 @@ fn read_input(input: &str) -> State {
     .collect();
 
   State {
-    polymer: first_line.chars().collect(),
+    polymer: format!("{}_", first_line)
+      .chars()
+      .tuple_windows::<(_, _)>()
+      .fold(HashMap::new(), |mut map, element| {
+        *map.entry(element).or_insert(0) += 1;
+        map
+      }),
     instructions,
   }
 }
