@@ -4,72 +4,47 @@ use std::collections::HashMap;
 use std::collections::LinkedList;
 use std::vec::Vec;
 
-#[derive(Debug, Default)]
-struct Instruction {
-  matcher: (char, char),
-  element: char,
-}
-
 struct State {
-  polymer: HashMap<(char, char), usize>,
-  instructions: Vec<Instruction>,
+  polymer: Vec<char>,
+  instructions: HashMap<(char, char), char>,
 }
 
 fn apply_instructions(
-  polymer: &HashMap<(char, char), usize>,
-  instructions: &Vec<Instruction>,
-) -> HashMap<(char, char), usize> {
-  let mut new_polymer = polymer.clone();
-  for instruction in instructions {
-    // println!("Polymer: {:#?} {:#?}", new_polymer, instruction);
-
-    // if let Some(original_count) = new_polymer.get(&instruction.matcher) {
-    let original_count_wrapped = polymer.get(&instruction.matcher);
-    if original_count_wrapped.is_none() {
-      continue;
-    }
-    println!("instruction {:#?}", instruction);
-
-    let original_count = *original_count_wrapped.unwrap();
-    *new_polymer
-      .entry((instruction.matcher.0, instruction.element))
-      .or_insert(0) += original_count;
-    *new_polymer
-      .entry((instruction.element, instruction.matcher.1))
-      .or_insert(0) += original_count;
-    *new_polymer.entry(instruction.matcher).or_insert(0) = 0
-    // }
-
-    // new_polymer[&(instruction.matcher.0, instruction.element)] += original_count;
-    // new_polymer[&(instruction.element, instruction.matcher.0)] += original_count;
-    // new_polymer[&instruction.matcher] = 0;
-  }
-  new_polymer
+  polymer: &Vec<char>,
+  instructions: &HashMap<(char, char), char>,
+) -> Vec<char> {
+  let mut ret: Vec<char> = polymer
+    .iter()
+    .tuple_windows::<(_, _)>()
+    .flat_map(|(left, right)| {
+      if let Some(new_element) = instructions.get(&(*left, *right)) {
+        Vec::from([*left, *new_element])
+      } else {
+        Vec::from([*left])
+      }
+    })
+    .collect();
+  ret.push(*polymer.last().unwrap());
+  ret
 }
 
-fn solution1(state: &State) -> usize {
+fn solution(state: &State, times: usize) -> usize {
   let mut polymer = state.polymer.clone();
-  for i in 0..1 {
+  for i in 0..times {
     // println!("Polymer: {:#?}", polymer);
     polymer = apply_instructions(&polymer, &state.instructions);
-    let sum: usize = polymer.values().sum();
+    let sum: usize = polymer.len();
     println!("At step {} the sum is {}", i, sum);
-    println!("Polymer is {:#?}", polymer);
+    // println!("Polymer is {:#?}", polymer);
   }
-  let char_counts = polymer
-    .iter()
-    .fold(HashMap::new(), |mut map, ((left, _), value)| {
-      *map.entry(left).or_insert(0) += value;
-      map
-    });
+  let char_counts = polymer.iter().fold(HashMap::new(), |mut map, charcter| {
+    *map.entry(charcter).or_insert(0) += 1;
+    map
+  });
   println!("Char counts value {:#?}", char_counts);
   let max = char_counts.values().max().unwrap();
   let min = char_counts.values().min().unwrap();
   max - min
-}
-
-fn solution2(state: &State) -> usize {
-  0
 }
 
 fn read_input(input: &str) -> State {
@@ -78,26 +53,20 @@ fn read_input(input: &str) -> State {
     .next()
     .expect("Expected to have at last one line");
   input_iter.next();
-  let instructions: Vec<Instruction> = input_iter
+  let instructions: HashMap<(char, char), char> = input_iter
     .map(
       |line| match &line.split(" -> ").collect::<Vec<&str>>()[..] {
-        [left, right] => Instruction {
-          matcher: (left.chars().nth(0).unwrap(), left.chars().nth(1).unwrap()),
-          element: right.chars().nth(0).unwrap(),
-        },
+        [left, right] => (
+          (left.chars().nth(0).unwrap(), left.chars().nth(1).unwrap()),
+          right.chars().nth(0).unwrap(),
+        ),
         _ => panic!("This should not happen"),
       },
     )
     .collect();
 
   State {
-    polymer: format!("{}_", first_line)
-      .chars()
-      .tuple_windows::<(_, _)>()
-      .fold(HashMap::new(), |mut map, element| {
-        *map.entry(element).or_insert(0) += 1;
-        map
-      }),
+    polymer: first_line.chars().collect(),
     instructions,
   }
 }
@@ -105,9 +74,9 @@ fn read_input(input: &str) -> State {
 pub fn main(s: &str, second: bool) -> usize {
   let state = read_input(s);
   if second {
-    solution2(&state)
+    solution(&state, 40)
   } else {
-    solution1(&state)
+    solution(&state, 10)
   }
 }
 
