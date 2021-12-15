@@ -1,4 +1,3 @@
-use itertools::Itertools;
 use std::cmp::Ordering;
 use std::collections::BinaryHeap;
 use std::collections::HashMap;
@@ -9,7 +8,6 @@ struct SearchState {
   position: (usize, usize),
   cost: usize,
   distance: usize,
-  // trail: Vec<(usize, usize)>
 }
 
 impl SearchState {
@@ -41,7 +39,7 @@ struct Grid {
 impl Grid {
   fn new(mx: &Vec<Vec<usize>>, repeater: usize) -> Self {
     Grid {
-      // not sure if there's a better way to get hold of the rference here
+      // not sure if there's a better way to get hold of the reference here
       original_grid: mx.clone(),
       repeater,
       original_bounds: (mx.len(), mx[0].len()),
@@ -68,9 +66,7 @@ impl Grid {
   }
 
   fn get_element(&self, (x, y): (usize, usize)) -> usize {
-    // TODO extend with repeater functionality
-    // Cache?
-    // self.original_grid[x][y]
+    // Cache would be useful here..
     let offset_x = x / self.original_bounds.0;
     let offset_y = y / self.original_bounds.1;
     if offset_x >= self.repeater || offset_y >= self.repeater {

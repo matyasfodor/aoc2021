@@ -1,10 +1,8 @@
-use itertools::Itertools;
 use std::collections::BTreeSet;
-use std::collections::VecDeque;
 use std::vec::Vec;
 
 fn copy_map(map: &Vec<Vec<usize>>) -> Vec<Vec<usize>> {
-  // Dummy progredd
+  // Dummy progress
   map
     .iter()
     .map(|line| line.iter().map(|e| *e).collect())
@@ -13,13 +11,6 @@ fn copy_map(map: &Vec<Vec<usize>>) -> Vec<Vec<usize>> {
 
 fn get_nines(map: &Vec<Vec<usize>>) -> BTreeSet<(isize, isize)> {
   let mut ret = BTreeSet::new();
-  // for let i = 1..map.len() {
-  //   for let j = 1..map[i].len() {
-  //     if map[i][j] == 0 {
-  //       ret.insert((i,j));
-  //     }
-  //   }
-  // }
   for (i, row) in map.iter().enumerate() {
     for (j, element) in row.iter().enumerate() {
       // println!("Element {} {}, {}", i, j, element);

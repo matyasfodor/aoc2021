@@ -1,7 +1,5 @@
 use itertools::Itertools;
-use regex::Regex;
 use std::collections::HashMap;
-use std::collections::LinkedList;
 use std::vec::Vec;
 
 struct State {

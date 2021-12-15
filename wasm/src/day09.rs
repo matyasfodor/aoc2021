@@ -40,7 +40,7 @@ fn solution1(heights: &Vec<Vec<usize>>) -> usize {
   mins.iter().map(|(e, _)| e + 1).sum()
 }
 
-fn print_state(flood_map: &Vec<Vec<usize>>, cntr: usize) {
+fn _print_state(flood_map: &Vec<Vec<usize>>, cntr: usize) {
   println!("Iteration {}", cntr);
   flood_map.iter().for_each(|line| {
     let line_to_print: String = line.iter().map(|&number| number.to_string()).collect();
@@ -56,13 +56,9 @@ fn solution2(heights: &Vec<Vec<usize>>) -> usize {
     flood_map[*x][*y] = index + 1;
   });
 
-  // println!("Map {:#?}", flood_map);
-  let mut did_update = false;
-  // let mut cntr = 0;
+  let mut did_update;
   loop {
     did_update = false;
-    // cntr += 1;
-    // print_state(&flood_map, cntr);
     let mut new_flood_map: Vec<Vec<usize>> = heights.iter().map(|row| vec![0; row.len()]).collect();
     for row_index in 0..heights.len() {
       for col_index in 0..heights[row_index].len() {
