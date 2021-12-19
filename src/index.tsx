@@ -20,6 +20,8 @@ import Day12 from "./days/day12";
 import Day13 from "./days/day13";
 import Day14 from "./days/day14";
 import Day15 from "./days/day15";
+import Day16 from "./days/day16";
+import Day17 from "./days/day17";
 
 const Header = styled.header`
   height: 50px;
@@ -130,6 +132,16 @@ const solutions: {
     name: "Day 15",
     path: "day/15",
     element: <Day15 />,
+  },
+  {
+    name: "Day 16",
+    path: "day/16",
+    element: <Day16 />,
+  },
+  {
+    name: "Day 17",
+    path: "day/17",
+    element: <Day17 />,
   },
 ];
 
