@@ -14,6 +14,7 @@ pub mod day14;
 pub mod day15;
 pub mod day16;
 pub mod day17;
+pub mod day20;
 
 use wasm_bindgen::prelude::*;
 
@@ -110,6 +111,11 @@ pub fn day16(input: &str, second: bool) -> usize {
 #[wasm_bindgen]
 pub fn day17(input: &str, second: bool) -> isize {
     return day17::main(input, second);
+}
+
+#[wasm_bindgen]
+pub fn day20(input: &str, second: bool) -> usize {
+    return day20::main(input, second);
 }
 
 #[cfg(test)]
