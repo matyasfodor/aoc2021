@@ -13,12 +13,12 @@ struct MinMax {
   y_max: isize,
 }
 
-fn should_light_up(mapping: &HashSet<usize>, number: usize, _invert: bool) -> bool {
+fn should_light_up(mapping: &HashSet<usize>, number: usize) -> bool {
   mapping.contains(&number)
 }
 
-fn iterate(map: &HashSet<(isize, isize)>, mapping: &HashSet<usize>) -> HashSet<(isize, isize)> {
-  let bounds = map.iter().fold(
+fn get_bounds(map: &HashSet<(isize, isize)>) -> MinMax {
+  map.iter().fold(
     MinMax {
       x_min: 100,
       x_max: 0,
@@ -37,15 +37,45 @@ fn iterate(map: &HashSet<(isize, isize)>, mapping: &HashSet<usize>) -> HashSet<(
       y_min: cmp::min(y_min, *y),
       y_max: cmp::max(y_max, *y),
     },
-  );
+  )
+}
+
+fn display(map: &HashSet<(isize, isize)>) {
+  let bounds = get_bounds(map);
+  // (bounds.x_min..bounds.x_max).cartesian_product(bounds.y_min..bounds.y_max).for_each
+  (bounds.x_min..bounds.x_max + 1).for_each(|x| {
+    (bounds.y_min..bounds.y_max + 1)
+      .for_each(|y| print!("{}", if map.contains(&(x, y)) { '#' } else { '.' }));
+    println!()
+  });
+}
+
+fn iterate(
+  map: &HashSet<(isize, isize)>,
+  mapping: &HashSet<usize>,
+  bg_lit: bool,
+) -> HashSet<(isize, isize)> {
+  let bounds = get_bounds(map);
 
   ((bounds.x_min - 1)..(bounds.x_max + 2))
     .cartesian_product((bounds.y_min - 1)..(bounds.y_max + 2))
-    .fold(HashSet::new(), |mut acc, (x, y)| {
+    .fold(HashSet::new(), |mut acc, (x_origin, y_origin)| {
       let string_neighbors: String = (-1..2)
         .cartesian_product(-1..2)
         .map(|(x_diff, y_diff)| {
-          if map.contains(&(x + x_diff, y + y_diff)) {
+          let x = x_origin + x_diff;
+          let y = y_origin + y_diff;
+          let is_fringe = (x == bounds.x_min - 1)
+            || (x == bounds.x_max + 1)
+            || (y == bounds.y_min - 1)
+            || (y == bounds.y_max + 1);
+          if bg_lit && is_fringe {
+            println!(
+              "Fringe x_orig {}, y_orig {}, x {}, y {}",
+              x_origin, y_origin, x, y
+            );
+          }
+          if (bg_lit && is_fringe) || map.contains(&(x, y)) {
             '1'
           } else {
             '0'
@@ -54,8 +84,8 @@ fn iterate(map: &HashSet<(isize, isize)>, mapping: &HashSet<usize>) -> HashSet<(
         })
         .collect();
       let int_neighbors = str_to_bin(&string_neighbors);
-      if should_light_up(mapping, int_neighbors, false) {
-        acc.insert((x, y));
+      if should_light_up(mapping, int_neighbors) {
+        acc.insert((x_origin, y_origin));
       }
       acc
     })
@@ -93,8 +123,16 @@ pub fn main(s: &str, second: bool) -> usize {
       }
       acc
     });
-  for _ in 0..2 {
-    map = iterate(&map, &mapping);
+
+  println!("first");
+  display(&map);
+  println!();
+
+  for i in 0..2 {
+    map = iterate(&map, &mapping, (i % 2 == 1) && mapping.contains(&0));
+    println!("Iteration {}", i);
+    display(&map);
+    println!();
   }
   map.len()
 }
@@ -103,9 +141,9 @@ pub fn main(s: &str, second: bool) -> usize {
 mod tests {
   #[test]
   fn day20_works_first() {
-    let input = "..#.#..#####.#.#.#.###.##.....###.##.#..###.####..#####..#....#..#..##..###..######.###...####..#..#####..##..#.#####...##.#.#..#.##..#.#......#.###.######.###.####...#.##.##..#..#..#####.....#.#....###..#.##......#.....#..#..#..##..#...##.######.####.####.#.#...#.......#..#.#.#...####.##.#......#..#...##.#.##..#...##.#.##..###.#......#.#.......#.#.#.####.###.##...#.....####.#..#..#.##.#....##..#.####....##...##..#...#......#.#.......#.......##..####..#...#.#.#...##..#.#..###..#####........#..####......#..#\n\n#..#.\n#....\n##..#\n..#..\n..###";
+    let input = "#.#.#..#####.#.#.#.###.##.....###.##.#..###.####..#####..#....#..#..##..###..######.###...####..#..#####..##..#.#####...##.#.#..#.##..#.#......#.###.######.###.####...#.##.##..#..#..#####.....#.#....###..#.##......#.....#..#..#..##..#...##.######.####.####.#.#...#.......#..#.#.#...####.##.#......#..#...##.#.##..#...##.#.##..###.#......#.#.......#.#.#.####.###.##...#.....####.#..#..#.##.#....##..#.####....##...##..#...#......#.#.......#.......##..####..#...#.#.#...##..#.#..###..#####........#..####......#..#\n\n#..#.\n#....\n##..#\n..#..\n..###";
     let res = super::main(input, false);
-    assert_eq!(res, 7);
+    assert_eq!(res, 35);
   }
 
   #[test]

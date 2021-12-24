@@ -1,5 +1,5 @@
 use itertools::Itertools;
-use std::vec::Vec;
+// use std::vec::Vec;
 use take_until::TakeUntilExt;
 
 struct Packet {
@@ -81,7 +81,7 @@ fn parse_graph(s: &str) -> (Packet, usize) {
     )
     // read number
   } else {
-    let length_type = binary.chars().skip(6).next().expect("Should be a char");
+    // let length_type = binary.chars().skip(6).next().expect("Should be a char");
     // operator, read subpackets
     panic!("Not implemented")
     // if length_type == '1' {
@@ -100,7 +100,7 @@ fn get_sum_versions(graph: &Packet) -> usize {
   graph.packet_version
 }
 
-pub fn main(s: &str, second: bool) -> usize {
+pub fn main(s: &str, _second: bool) -> usize {
   let (graph, _) = parse_graph(s);
   let sum_versions = get_sum_versions(&graph);
   sum_versions
